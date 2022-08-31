@@ -51,17 +51,17 @@ SEUIL = "choix_seuil.png"
 
 @st.cache
 def load_data():
-        PATH = '../P7_data/data/'
+        #PATH = 'P7_data/data/'
 
         #data avant f-engineering
-        data_train = pd.read_parquet(PATH+'application_train.parquet') #train set
-        data_test = pd.read_parquet(PATH+'application_test.parquet') #test set
+        data_train = pd.read_parquet('application_train.parquet') #train set
+        data_test = pd.read_parquet('application_test.parquet') #test set
 
         #data après f-engineering
-        df = pd.read_parquet(PATH+'test_df.parquet') #test set
+        df = pd.read_parquet('test_df.parquet') #test set
 
         #description des features
-        description = pd.read_csv(PATH+'HomeCredit_columns_description.csv', 
+        description = pd.read_csv('HomeCredit_columns_description.csv', 
                                         usecols=['Row', 'Description'], \
                                         index_col=0, encoding='unicode_escape')
 
@@ -70,7 +70,7 @@ def load_data():
 @st.cache
 def load_model():
         '''loading the trained model'''
-        return pickle.load(open('./LGBMClassifier.pkl', 'rb'))
+        return pickle.load(open('LGBMClassifier.pkl', 'rb'))
         
 @st.cache
 def get_client_info(data, id_client):
