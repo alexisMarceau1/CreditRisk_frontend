@@ -45,9 +45,9 @@ LOGO_IMAGE = "logo.png"
 SHAP_GENERAL = "feature_importance_global.png"
 SEUIL = "choix_seuil.png"
 
-#--------------
-#--fonctions---
-#--------------
+#---------------
+#--fonctions----
+#---------------
 
 @st.cache
 def load_data():
