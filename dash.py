@@ -267,7 +267,9 @@ if (int(id_client) in id_list):
             #Appel de l'API :
              
             #link to the api
-            API_url = f"http://127.0.0.1:8000/prediction/{id_client}"
+            #API_url = f"http://127.0.0.1:8000/prediction/{id_client}" #local
+            API_url = f"https://api-alexis-p7.herokuapp.com/prediction/{id_client}" #web
+            
 
             #open json dict
             json_url = urlopen(API_url)
