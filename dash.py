@@ -35,7 +35,6 @@ import json
 import math
 
 from urllib.request import urlopen
-import plotly.graph_objects as go 
 
 #-----------------------
 #---------App-----------
