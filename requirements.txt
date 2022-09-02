@@ -9,3 +9,4 @@ protobuf
 lightgbm
 pyarrow
 fastparquet
+ipython
