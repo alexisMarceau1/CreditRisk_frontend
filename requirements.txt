@@ -12,4 +12,4 @@ fastparquet
 ipython
 plotly
 streamlit_shap
-numba
+numba==0.51.0
