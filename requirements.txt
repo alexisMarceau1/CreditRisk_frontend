@@ -2,13 +2,13 @@ matplotlib
 numpy
 pandas
 seaborn
-shap==0.41.0
-streamlit==1.5.1
+shap
+streamlit
 requests
 protobuf
 lightgbm
 pyarrow
 fastparquet
 ipython
-plotly==5.6.0
-streamlit_shap==1.0.2
+plotly
+streamlit_shap
