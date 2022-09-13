@@ -11,3 +11,4 @@ pyarrow
 fastparquet
 ipython
 plotly
+streamlit_shap
