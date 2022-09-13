@@ -33,7 +33,9 @@ import pickle
 import shap
 import json
 import math
+import plotly.graph_objects as go 
 
+from streamlit_shap import st_shap
 from urllib.request import urlopen
 
 #-----------------------
@@ -41,8 +43,9 @@ from urllib.request import urlopen
 #-----------------------
 
 LOGO_IMAGE = "logo.png"
-SHAP_GENERAL = "feature_importance_global.png"
-SEUIL = "choix_seuil.png"
+SHAP_GENERAL1 = "glob1.png"
+SHAP_GENERAL2 = "glob2.png"
+SEUIL = "seuil.png"
 
 #---------------
 #--fonctions----
@@ -252,16 +255,16 @@ if (int(id_client) in id_list):
 
         if (show_credit_decision):
             st.header('Décision du modèle')
-            st.image(SEUIL)
-            with st.expander("🔍 Choix du seuil"):
-                st.write("Le modèle est entrainé pour minimiser les risques\
-                d'accorder un prêt à un client qui ne peut pas rembourser.\
-                Plus le seuil choisi est élevé plus le risque de perte est fort.")
+            #st.image(SEUIL)
+            # with st.expander("🔍 Choix du seuil"):
+            #     st.write("Le modèle est entrainé pour minimiser les risques\
+            #     d'accorder un prêt à un client qui ne peut pas rembourser.\
+            #     Plus le seuil choisi est élevé plus le risque de perte est fort.")
 
-                st.write("Un seuil de 0.2 est idéal si l'on souhaite minimiser ce risque.\
-                Cependant, le manque à gagner peut être plus important.")
+            #     st.write("Un seuil de 0.2 est idéal si l'on souhaite minimiser ce risque.\
+            #     Cependant, le manque à gagner peut être plus important.")
 
-                st.write("Le seuil de 0.5 est le seuil par défaut.")
+            #     st.write("Le seuil de 0.5 est le seuil par défaut.")
             
             #Appel de l'API :
              
@@ -274,61 +277,114 @@ if (int(id_client) in id_list):
             json_url = urlopen(API_url)
             API_data = json.loads(json_url.read())
 
-            seuil_list =['Défaut (50%)', 'Minimisation risque (20%)', 'Personnalisé']
-            seuil = st.selectbox(
-            "Sélectionner le seuil", seuil_list)
+            #seuil_list =['Défaut (50%)', 'Minimisation risque (20%)', 'Personnalisé']
+            #seuil = st.selectbox(
+            #"Sélectionner le seuil", seuil_list)
 
             classe_predite = API_data['prediction']
             proba = 1-API_data['proba']
             client_score = round(proba*100, 2) #calcul du score
+            
+            fig = go.Figure(go.Indicator(
+            domain = {'x': [0, 1], 'y': [0, 1]},
+            value = client_score,
+            mode = "gauge+number",
+            title = {'text': "Risque de défaut (en %)"},
+            gauge = {'axis': {'range': [None, 100]},
+                    'steps' : [
+                        {'range': [0, 20], 'color': "lightgreen"},
+                        {'range': [20, 30], 'color': "lightyellow"},
+                        {'range': [30, 60], 'color': "orange"},
+                        {'range': [60, 100], 'color': "red"}],
+                    'threshold' : {'line': {'color': "black", 'width': 10}, 'thickness': 0.6, 'value': client_score},
+                    'bar': {'color': "black", 'thickness' : 0.2}}))
+        
+            st.plotly_chart(fig, use_container_width=True)
+            
+            if client_score < 20:
+                st.markdown("<h2 style='text-align: center; color: lightgreen;'>✅ Pas de risque.</h2>", unsafe_allow_html=True)
+            elif (client_score > 20) & (client_score < 30):
+                st.markdown("<h2 style='text-align: center; color: lightyellow;'>Risque faible et possibilité d'identifier un mauvais payeur.</h2>", unsafe_allow_html=True)
+            elif (client_score > 30) & (client_score < 60):
+                st.markdown("<h2 style='text-align: center; color: orange;'>Risque faible et possibilité d'identifier un bon payeur.</h2s>", unsafe_allow_html=True)
+            elif client_score > 60:
+                st.markdown("<h2 style='text-align: center; color: red;'>⚠ Risque élevé.</h2>", unsafe_allow_html=True)
+
+            st.write("\n")
+            st.write("\n")
+
+            with st.expander("🔍 Description"):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.image(SEUIL, width=660)
+                with col2:
+                    st.write(' ')
+                with col3:
+                    st.write(' ')
+                st.write("---")
+                st.write("La courbe ci-dessus indique le gain potentiel en fonction du seuil.\
+                    Le seuil étant la probabilité (comprise entre 0 et 1) qu'un client ne rembourse pas son prêt.")
+                st.write("Ce modèle est entrainé pour minimiser les risques\
+                d'accorder un prêt à un client qui ne peut pas rembourser.")
+
+                
 
             #adapt threshold to the client choice
-            if seuil == 'Défaut (50%)':
-                seuil_value = 50
-            elif seuil == 'Minimisation risque (20%)':
-                seuil_value = 20
-            elif seuil == 'Personnalisé':
-                seuil_value=st.number_input("Seuil:",)
+            #if seuil == 'Défaut (50%)':
+                #seuil_value = 50
+            #elif seuil == 'Minimisation risque (20%)':
+                #seuil_value = 20
+            #elif seuil == 'Personnalisé':
+                #seuil_value=st.number_input("Seuil:",)
 
             #show prediction
-            if client_score < seuil_value:
-                    decision = '✅ Crédit Accordé'
-            else:
-                    decision = '❌ Crédit Refusé'  
+            #if client_score < seuil_value:
+                    #decision = '✅ Crédit Accordé'
+            #else:
+                    #decision = '❌ Crédit Refusé'  
 
             
-            left_column, right_column = st.columns((1, 2))
-            left_column.markdown('Risque de défaut: **{}%**'.format(str(client_score)))
+            #left_column, right_column = st.columns((1, 2))
+            #left_column.markdown('(Risque de défaut: **{}%**)'.format(str(client_score)))
             #left_column.markdown('Seuil par défaut du modèle: **50%**')
 
-            if decision == '❌ Crédit Refusé':
-                left_column.markdown(
-                    'Décision: <span style="color:red">**{}**</span>'.format(decision),\
-                    unsafe_allow_html=True)   
-            else:    
-                left_column.markdown(
-                    'Décision: <span style="color:green">**{}**</span>'\
-                    .format(decision), \
-                    unsafe_allow_html=True)
+            #if decision == '❌ Crédit Refusé':
+                #left_column.markdown(
+                    # 'Décision: <span style="color:red">**{}**</span>'.format(decision),\
+                    # unsafe_allow_html=True)   
+            # else:    
+            #     left_column.markdown(
+            #         'Décision: <span style="color:green">**{}**</span>'\
+            #         .format(decision), \
+            #         unsafe_allow_html=True)
             
             show_local_feature_importance = st.checkbox(
                 "Afficher les variables ayant le plus contribué à la décision du modèle ?")
             if (show_local_feature_importance):
+                
                 shap.initjs()
 
                 number = st.slider('Sélectionner le nombre de feautures à afficher ?', \
-                                    2, 20, 8)
+                                    2, 20, 5)
 
                 X = df[df['SK_ID_CURR']==int(id_client)]
                 X = X[relevant_features]
 
-                fig, ax = plt.subplots(figsize=(15, 15))
-                explainer = shap.TreeExplainer(model)
-                shap_values = explainer.shap_values(X)
-                shap.summary_plot(shap_values[0], X, plot_type ="bar", \
-                                    max_display=number, color_bar=False, plot_size=(8, 8))
+                explainer_local = pickle.load(open('lgbm_explainer_local.pkl', 'rb'))
+                #fig, ax = plt.subplots(figsize=(20, 20))
+                #explainer_local = shap.Explainer(model, data_test)
+                shap_values = explainer_local(X)
+                
 
-                st.pyplot(fig)
+                st_shap(shap.plots.waterfall(shap_values[0], max_display=number),height=500, width=700)
+            
+                #explainer = shap.TreeExplainer(model)
+                #shap_values = explainer.shap_values(X)
+                #shap.summary_plot(shap_values[0], X, plot_type ="bar", \
+                                    #max_display=number, color_bar=False, plot_size=(8, 8))
+                
+                
+                #st.pyplot(fig)
 
         #-------------------------------------------------------
         # Afficher les informations du client
@@ -417,7 +473,10 @@ if (int(id_client) in id_list):
 
         if (shap_general):
             st.header('‍Feature importance globale')
-            st.image(SHAP_GENERAL)
+            st.write("Interprétation globale du modèle lgbm sur les 1000 premiers clients pour la classe 1(prêt non remboursé) : **layered violin plot**")
+            st.image(SHAP_GENERAL1)
+            st.write("Interprétation globale du modèle lgbm sur les 1000 premiers clients pour la classe 1(prêt non remboursé) : **bar plot**") 
+            st.image(SHAP_GENERAL2)
         
             
 
