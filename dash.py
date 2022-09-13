@@ -73,6 +73,11 @@ def load_data():
 def load_model():
         '''loading the trained model'''
         return pickle.load(open('LGBMClassifier.pkl', 'rb'))
+
+@st.cache
+def load_explainer():
+        '''loading the trained explainer'''
+        return pickle.load(open('lgbm_explainer_local.pkl', 'rb'))
         
 @st.cache
 def get_client_info(data, id_client):
@@ -370,7 +375,7 @@ if (int(id_client) in id_list):
                 X = df[df['SK_ID_CURR']==int(id_client)]
                 X = X[relevant_features]
 
-                explainer_local = pickle.load(open('lgbm_explainer_local.pkl', 'rb'))
+                explainer_local = load_explainer()
                 #fig, ax = plt.subplots(figsize=(20, 20))
                 #explainer_local = shap.Explainer(model, data_test)
                 shap_values = explainer_local(X)
