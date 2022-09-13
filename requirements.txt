@@ -3,12 +3,12 @@ numpy
 pandas
 seaborn
 shap
-streamlit
+streamlit==1.5.1
 requests
 protobuf
 lightgbm
 pyarrow
 fastparquet
 ipython
-plotly
-streamlit_shap
+plotly==5.6.0
+streamlit_shap==1.0.2
