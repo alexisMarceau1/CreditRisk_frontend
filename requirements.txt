@@ -10,3 +10,4 @@ lightgbm
 pyarrow
 fastparquet
 ipython
+plotly
