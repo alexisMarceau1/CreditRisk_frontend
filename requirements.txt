@@ -2,7 +2,7 @@ matplotlib
 numpy
 pandas
 seaborn
-shap
+shap==0.41.0
 streamlit==1.5.1
 requests
 protobuf
