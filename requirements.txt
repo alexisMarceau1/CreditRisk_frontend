@@ -12,3 +12,4 @@ fastparquet
 ipython
 plotly
 streamlit_shap
+numba
