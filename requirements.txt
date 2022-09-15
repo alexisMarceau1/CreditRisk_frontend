@@ -6,10 +6,10 @@ shap
 streamlit
 requests
 protobuf
-lightgbm==3.3.2
+lightgbm
 pyarrow
 fastparquet
 ipython
 plotly
 streamlit_shap
-numba==0.53.0
+numba
