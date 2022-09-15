@@ -34,6 +34,7 @@ import shap
 import json
 import math
 import plotly.graph_objects as go 
+import joblib
 
 from streamlit_shap import st_shap
 from urllib.request import urlopen
@@ -204,6 +205,7 @@ relevant_features = [col for col in df if col not in ignore_features]
 
 #Chargement du modèle
 model = load_model()
+explainer_local = shap.Explainer(model, df[relevant_features])
 
 #-------------------
 #--SIDEBAR----------
@@ -375,10 +377,12 @@ if (int(id_client) in id_list):
                 X = df[df['SK_ID_CURR']==int(id_client)]
                 X = X[relevant_features]
 
-                explainer_local = load_explainer()
+
+                
                 #fig, ax = plt.subplots(figsize=(20, 20))
                 #explainer_local = shap.Explainer(model, data_test)
                 shap_values = explainer_local(X)
+                #shap_values = joblib.load("shap_local")
                 
 
                 st_shap(shap.plots.waterfall(shap_values[0], max_display=number),height=500, width=700)
