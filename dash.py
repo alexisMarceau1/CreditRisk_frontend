@@ -57,18 +57,19 @@ def load_data():
         #PATH = 'P7_data/data/'
 
         #data avant f-engineering
-        data_train = pd.read_parquet('application_train.parquet') #train set
+        #data_train = pd.read_parquet('application_train.parquet') #train set
         data_test = pd.read_parquet('application_test.parquet') #test set
 
         #data après f-engineering
         df = pd.read_parquet('test_df.parquet') #test set
+        df = df.iloc[:50,:]
 
         #description des features
         description = pd.read_csv('HomeCredit_columns_description.csv', 
                                         usecols=['Row', 'Description'], \
                                         index_col=0, encoding='unicode_escape')
 
-        return df, data_test, data_train, description
+        return df, data_test, description
 
 @st.cache
 def load_model():
@@ -198,7 +199,7 @@ def univariate_categorical(applicationDF,feature,client_feature_val,\
 #--------------
 
 #Chargement des données    
-df, data_test, data_train, description = load_data()
+df, data_test, description  = load_data()
 
 ignore_features = ['Unnamed: 0','SK_ID_CURR', 'INDEX', 'TARGET']
 relevant_features = [col for col in df if col not in ignore_features]
