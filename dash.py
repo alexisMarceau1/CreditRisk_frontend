@@ -34,7 +34,7 @@ import shap
 import json
 import math
 import plotly.graph_objects as go 
-import joblib
+#import joblib
 
 from streamlit_shap import st_shap
 from urllib.request import urlopen
@@ -57,7 +57,7 @@ def load_data():
         #PATH = 'P7_data/data/'
 
         #data avant f-engineering
-        #data_train = pd.read_parquet('application_train.parquet') #train set
+        data_train = pd.read_parquet('application_train.parquet') #train set
         data_test = pd.read_parquet('application_test.parquet') #test set
 
         #data après f-engineering
@@ -69,7 +69,7 @@ def load_data():
                                         usecols=['Row', 'Description'], \
                                         index_col=0, encoding='unicode_escape')
 
-        return df, data_test, description
+        return df, data_test, data_train, description
 
 @st.cache
 def load_model():
@@ -199,7 +199,7 @@ def univariate_categorical(applicationDF,feature,client_feature_val,\
 #--------------
 
 #Chargement des données    
-df, data_test, description  = load_data()
+df, data_test, data_train, description  = load_data()
 
 ignore_features = ['Unnamed: 0','SK_ID_CURR', 'INDEX', 'TARGET']
 relevant_features = [col for col in df if col not in ignore_features]
@@ -301,8 +301,8 @@ if (int(id_client) in id_list):
             gauge = {'axis': {'range': [None, 100]},
                     'steps' : [
                         {'range': [0, 20], 'color': "lightgreen"},
-                        {'range': [20, 30], 'color': "lightyellow"},
-                        {'range': [30, 60], 'color': "orange"},
+                        {'range': [20, 40], 'color': "lightyellow"},
+                        {'range': [40, 60], 'color': "orange"},
                         {'range': [60, 100], 'color': "red"}],
                     'threshold' : {'line': {'color': "black", 'width': 10}, 'thickness': 0.6, 'value': client_score},
                     'bar': {'color': "black", 'thickness' : 0.2}}))
@@ -311,17 +311,17 @@ if (int(id_client) in id_list):
             
             if client_score < 20:
                 st.markdown("<h2 style='text-align: center; color: lightgreen;'>✅ Pas de risque.</h2>", unsafe_allow_html=True)
-            elif (client_score > 20) & (client_score < 30):
+            elif (client_score > 20) & (client_score < 40):
                 st.markdown("<h2 style='text-align: center; color: lightyellow;'>Risque faible et possibilité d'identifier un mauvais payeur.</h2>", unsafe_allow_html=True)
-            elif (client_score > 30) & (client_score < 60):
-                st.markdown("<h2 style='text-align: center; color: orange;'>Risque faible et possibilité d'identifier un bon payeur.</h2s>", unsafe_allow_html=True)
+            elif (client_score > 40) & (client_score < 60):
+                st.markdown("<h2 style='text-align: center; color: orange;'>Risque moyen et possibilité d'identifier un bon payeur.</h2s>", unsafe_allow_html=True)
             elif client_score > 60:
                 st.markdown("<h2 style='text-align: center; color: red;'>⚠ Risque élevé.</h2>", unsafe_allow_html=True)
 
             st.write("\n")
             st.write("\n")
 
-            with st.expander("🔍 Description"):
+            with st.expander("🔍 Analyse globale du risque"):
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     st.image(SEUIL, width=660)
@@ -330,10 +330,22 @@ if (int(id_client) in id_list):
                 with col3:
                     st.write(' ')
                 st.write("---")
-                st.write("La courbe ci-dessus indique le gain potentiel en fonction du seuil.\
-                    Le seuil étant la probabilité (comprise entre 0 et 1) qu'un client ne rembourse pas son prêt.")
-                st.write("Ce modèle est entrainé pour minimiser les risques\
+
+                st.write("Le modèle est entrainé pour minimiser les risques\
                 d'accorder un prêt à un client qui ne peut pas rembourser.")
+
+                st.write("La courbe ci-dessus indique l'espérance statistique du gain en fonction du seuil.\
+                    Le seuil étant la probabilité (comprise entre 0 et 1) qu'un client ne rembourse pas son prêt.")
+
+                st.write("Exemples :")
+                st.write(" - Pour un seuil de 0, aucun client n'est accepté, donc aucun gain potentiel")
+                st.write(" - Pour un seuil inférieur à 0.2, seul les clients avec une probabilité de défaut inférieur à 20% sont acceptés.")
+                st.write(" - Pour un seuil inférieur à 0.4, seul les clients avec une probabilité de défaut inférieur à 40% sont acceptés.\
+                            Les risques sont faibles et les gains potentiels sont élevés mais il est toujours possible d'identifier de mauvais payeurs.")
+                st.write(" - Pour un seuil inférieur à 0.6, seul les clients avec une probabilité de défaut inférieur à 60% sont acceptés.\
+                            Les risques sont moyens mais il est toujours possible d'identifier un bon payeur.")
+                st.write(" - Pour un seuil supérieur à 0.6, les risques de pertes sont élevés.\
+                            Une expertise métier s'impose à l'aide de l'interprétabilité locale.")
 
                 
 
@@ -365,7 +377,7 @@ if (int(id_client) in id_list):
             #         'Décision: <span style="color:green">**{}**</span>'\
             #         .format(decision), \
             #         unsafe_allow_html=True)
-            
+            st.header("Interprétabilité locale")
             show_local_feature_importance = st.checkbox(
                 "Afficher les variables ayant le plus contribué à la décision du modèle ?")
             if (show_local_feature_importance):
