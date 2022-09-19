@@ -1,5 +1,7 @@
 # P7_frontend
 
+L'application permet d'estimer le risque (probabilité) que le client ne rembourse pas son prêt.
+
 Pour lancer l'application : 
 
 https://dash-alexis-p7.herokuapp.com/
