@@ -2,7 +2,7 @@
 
 Pour lancer l'application : 
 
-https://api-alexis-p7.herokuapp.com/
+https://dash-alexis-p7.herokuapp.com/
 
 id "bon client" : 100057
 
