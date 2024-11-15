@@ -47,5 +47,16 @@ Before you begin, ensure the following:
     - Run the backend using:
         ```bash
         uvicorn api:app --reload
+ 4. **Run the Frontend Dashboard**:
+    Launch the Streamlit application by running:
+    ```bash
+    streamlit run dash.py
+  5. **Access the Dashboard**:
+    Open your browser and navigate to the following URL:
+    ```bash
+    [streamlit run dash.py](http://localhost:8501)
+  
+  
+
   
 
