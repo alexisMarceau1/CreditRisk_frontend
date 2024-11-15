@@ -40,5 +40,12 @@ Before you begin, ensure the following:
     Install the required Python packages using::
     ```bash
     pip install -r requirements.txt
+ 3. **Start the Backend API**:
+    Ensure the backend is running at http://127.0.0.1:8000. To do this:
+    - Clone and navigate to the CreditRisk Backend Repository.
+    - Follow the setup instructions in that repository.
+    - Run the backend using:
+        ```bash
+        uvicorn api:app --reload
   
 
