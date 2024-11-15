@@ -53,7 +53,7 @@ Before you begin, ensure the following:
     streamlit run dash.py
   5. **Access the Dashboard**:
     Open your browser and navigate to the following URL:
-    [streamlit run dash.py](http://localhost:8501)
+    http://localhost:8501
   
   
 
