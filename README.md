@@ -1,6 +1,6 @@
 # CreditRisk Frontend
 
-This repository contains the **frontend application** for the **CreditRisk** project, built using [Streamlit](https://streamlit.io/). The dashboard provides interactive visualizations and interpretability for credit risk predictions.
+This repository contains the **frontend application** for the **[CreditRisk](https://github.com/alexisMarceau1/CreditRisk_solution)** project, built using [Streamlit](https://streamlit.io/). The dashboard provides interactive visualizations and interpretability for credit risk predictions.
 
 ---
 
