@@ -37,7 +37,8 @@ Before you begin, ensure the following:
    git clone https://github.com/alexisMarceau1/CreditRisk_frontend.git
    cd CreditRisk_frontend
  2. **Install Dependencies**:
-  Install the required Python packages using::
- ```bash
- pip install -r requirements.txt
+    Install the required Python packages using::
+    ```bash
+    pip install -r requirements.txt
+  
 
